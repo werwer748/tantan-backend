@@ -4,3 +4,4 @@ dist/
 .env
 *.env
 .env.*
+teaching-nestjs-a-to-z-frontend/
