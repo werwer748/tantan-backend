@@ -4,9 +4,12 @@ import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { HttpExceptionFilter } from './common/exceptions/http-exception.filter';
 import * as expressBasicAuth from 'express-basic-auth';
+import * as path from 'path';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  //NestExpressApplication를 제네릭으로 써줘야 useStaticAssets를 사용할 수 있다. => express 기반인것을 명시해 줘야한다.
   const port = process.env.PORT || 3000;
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());
@@ -17,6 +20,11 @@ async function bootstrap() {
       challenge: true,
     }),
   );
+
+  // http://localhost:8000/media/cats/파일명
+  app.useStaticAssets(path.join(__dirname, './common', 'uploads'), {
+    prefix: '/media', // 앞의 경로에 media라는 path로 접근할 수 있게 해준다.
+  });
 
   const config = new DocumentBuilder()
     .setTitle('C.I.C API')

@@ -1,19 +1,28 @@
 import { Module, forwardRef } from '@nestjs/common';
-import { CatsController } from './cats.controller';
-import { CatsService } from './cats.service';
+import { CatsController } from './controllers/cats.controller';
+import { CatsService } from './services/cats.service';
 import { Cat, CatSchema } from 'src/cats/cats.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CatsRepository } from './cats.repository';
 import { AuthModule } from '../auth/auth.module';
+import { MulterModule } from '@nestjs/platform-express';
+import { Comments, CommentsSchema } from 'src/comments/comments.schema';
 
 @Module({
   imports: [
+    MulterModule.register({
+      dest: './upload', // 파일 저장 경로
+    }),
+
     /*
     Cat.name 부분은 'Cat' 으로 바꿔써도 동일
     .name은 함수의 이름을 반환하는 읽기전용 프로퍼티
     */
-    MongooseModule.forFeature([{ name: Cat.name, schema: CatSchema }]),
-    forwardRef(() => AuthModule),
+    MongooseModule.forFeature([
+      { name: Comments.name, schema: CommentsSchema },
+      { name: Cat.name, schema: CatSchema },
+    ]),
+    forwardRef(() => AuthModule), // 순환참조 해결
   ],
   controllers: [CatsController],
   providers: [CatsService, CatsRepository],
