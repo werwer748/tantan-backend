@@ -21,7 +21,7 @@ import { ConfigModule } from '@nestjs/config';
     캡슐화되어 은닉화된 모듈을 public화 해준 것.
     이렇게 안쓰면 providers에 직접 등록해서 사용해야 함.
     */
-    forwardRef(() => CatsModule),
+    forwardRef(() => CatsModule), // 순환참조 해결
   ],
   providers: [AuthService, JwtStrategy],
   exports: [AuthService],
